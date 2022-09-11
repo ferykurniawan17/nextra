@@ -1,5 +1,11 @@
 # nextra
 
+## 2.0.0-beta.27
+
+### Patch Changes
+
+- d7e7f5b: do not add `placeholder="blur"` on `.svg` static images
+
 ## 2.0.0-beta.26
 
 ### Patch Changes

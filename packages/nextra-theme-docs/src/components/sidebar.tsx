@@ -50,7 +50,7 @@ const classes = {
   list: 'flex gap-1 flex-col',
   border: cn(
     'relative before:absolute before:top-1.5 before:bottom-1.5',
-    'before:content-[""] before:w-px before:bg-gray-200 dark:before:bg-neutral-800',
+    "before:content-[''] before:w-px before:bg-gray-200 dark:before:bg-neutral-800",
     'ltr:pl-3 rtl:pr-3 ltr:before:left-0 rtl:before:right-0'
   )
 }
@@ -225,7 +225,7 @@ function File({
                   href={`#${slug}`}
                   className={cn(
                     classes.link,
-                    'before:opacity-25 flex gap-2 before:content-["#"]',
+                    "before:opacity-25 flex gap-2 before:content-['#']",
                     activeAnchor[slug]?.isActive
                       ? classes.active
                       : classes.inactive
@@ -287,7 +287,7 @@ export function Sidebar({
   includePlaceholder
 }: SideBarProps): ReactElement {
   const config = useConfig()
-  const { menu, setMenu } = useMenu()
+  const { menu } = useMenu()
   const anchors = useMemo(
     () =>
       headings
@@ -309,14 +309,22 @@ export function Sidebar({
   useEffect(() => {
     const activeElement = sidebarRef.current?.querySelector('li.active')
 
-    if (activeElement) {
-      scrollIntoView(activeElement, {
-        block: 'center',
-        inline: 'center',
-        scrollMode: 'always'
-      })
+    if (activeElement && (window.innerWidth > 767 || menu)) {
+      const scroll = () => {
+        scrollIntoView(activeElement, {
+          block: 'center',
+          inline: 'center',
+          scrollMode: 'always'
+        })
+      }
+      if (menu) {
+        // needs for mobile since menu has transition transform
+        setTimeout(scroll, 300)
+      } else {
+        scroll()
+      }
     }
-  }, [])
+  }, [menu])
 
   const hasMenu = config.i18n.length > 0 || config.darkMode
 
@@ -325,15 +333,6 @@ export function Sidebar({
       {includePlaceholder && asPopover ? (
         <div className="hidden h-0 w-64 flex-shrink-0 xl:block" />
       ) : null}
-      <div
-        className={cn(
-          '[transition:background-color_1.5s_ease] motion-reduce:transition-none',
-          menu
-            ? 'fixed inset-0 z-10 bg-black/80 dark:bg-black/60'
-            : 'bg-transparent'
-        )}
-        onClick={() => setMenu(false)}
-      />
       <aside
         className={cn(
           'nextra-sidebar-container',
@@ -349,8 +348,7 @@ export function Sidebar({
         <div
           className={cn(
             'px-4 pb-4 md:pt-4 overflow-y-auto nextra-scrollbar',
-            'h-[calc(100vh-var(--nextra-navbar-height)-var(--nextra-menu-height)-4rem)]',
-            'md:h-[calc(100vh-var(--nextra-navbar-height)-var(--nextra-menu-height))]'
+            'h-[calc(100vh-var(--nextra-navbar-height)-var(--nextra-menu-height))]'
           )}
           ref={sidebarRef}
         >
